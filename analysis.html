@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f2f5f0">
+    <title>Class performance | Eagles Rising High School</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #19332f;
+            --muted: #5c6e63;
+            --line: #dce4dc;
+            --paper: #fffefa;
+            --canvas: #f2f5f0;
+            --green: #245c4b;
+            --green-soft: #e6f0e9;
+            --coral: #c85c43;
+            --yellow: #f3cb69;
+            font-family: "DM Sans", "Trebuchet MS", sans-serif;
+            color: var(--ink);
+            background: var(--canvas);
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-width: 320px; background: var(--canvas); font-size: 16px; line-height: 1.5; }
+        button, select { font: inherit; }
+        button { cursor: pointer; }
+        .topbar {
+            display: flex; align-items: center; justify-content: space-between; gap: 20px;
+            min-height: 72px; padding: 12px clamp(18px, 4vw, 58px); background: #193b34; color: #fffefa;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-logo { width: 38px; height: 38px; flex: 0 0 auto; border: 1px solid #ffffff59; border-radius: 50%; background: #fff; object-fit: cover; }
+        .brand-name { font-family: "Fraunces", Georgia, serif; font-size: 20px; }
+        .back-link { color: #fffefa; font-size: 14px; font-weight: 700; text-decoration: none; }
+        .back-link:hover { color: var(--yellow); }
+        main { width: min(1240px, 100%); margin: 0 auto; padding: 38px clamp(16px, 4vw, 46px) 60px; }
+        .heading-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 25px; }
+        h1 { margin: 0; font-family: "Fraunces", Georgia, serif; font-size: clamp(30px, 4vw, 40px); font-weight: 500; }
+        .subtitle { margin: 7px 0 0; color: var(--muted); font-size: 16px; }
+        .filters { display: flex; align-items: end; gap: 10px; }
+        .filter { display: grid; gap: 5px; }
+        .filter label { color: #52665c; font-size: 13px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+        .filter select { min-width: 260px; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); font-size: 15px; }
+        .overview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+        .overview-card, .grade-card, .panel { border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
+        .overview-card { padding: 19px 21px; }
+        .overview-label { color: #52665c; font-size: 13px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+        .overview-value { display: block; margin-top: 6px; font-family: "Fraunces", Georgia, serif; font-size: 30px; }
+        .grade-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 24px; }
+        .grade-card { padding: 12px 14px; }
+        .grade-name { color: #52665c; font-size: 13px; font-weight: 700; text-transform: uppercase; }
+        .grade-count { display: block; margin-top: 5px; font-size: 24px; font-weight: 700; }
+        .grade-card[data-grade="A"] { border-top: 3px solid #43815d; }
+        .grade-card[data-grade="B"] { border-top: 3px solid #7ba66c; }
+        .grade-card[data-grade="C"] { border-top: 3px solid #d5b44f; }
+        .grade-card[data-grade="D"] { border-top: 3px solid #d78a4d; }
+        .grade-card[data-grade="E"] { border-top: 3px solid #c97957; }
+        .grade-card[data-grade="F"] { border-top: 3px solid #b95248; }
+        .charts { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 16px; margin-bottom: 24px; }
+        .panel { min-width: 0; padding: 20px; }
+        .panel h2 { margin: 0; font-size: 17px; }
+        .panel-note { margin: 5px 0 16px; color: #586b61; font-size: 14px; line-height: 1.5; }
+        .chart-wrap { min-height: 245px; }
+        .chart { display: block; width: 100%; height: auto; overflow: visible; }
+        .chart text { fill: #52665c; font-family: "DM Sans", sans-serif; font-size: 13px; }
+        .donut-layout { display: grid; grid-template-columns: minmax(145px, 1fr) minmax(90px, .75fr); align-items: center; gap: 10px; min-height: 215px; }
+        .donut-chart { width: 100%; max-width: 230px; margin: auto; }
+        .donut-total { fill: var(--ink) !important; font-size: 21px !important; font-weight: 700; text-anchor: middle; }
+        .donut-caption { fill: var(--muted) !important; font-size: 11px !important; text-anchor: middle; }
+        .legend { display: grid; gap: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; color: #40574b; font-size: 14px; }
+        .legend-swatch { width: 9px; height: 9px; flex: 0 0 auto; border-radius: 2px; }
+        .empty-chart { display: grid; min-height: 210px; place-items: center; padding: 20px; color: #586b61; text-align: center; font-size: 15px; }
+        .table-panel { padding: 0; overflow: hidden; }
+        .table-heading { padding: 18px 20px 12px; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 13px 15px; border-top: 1px solid #e6ebe5; text-align: left; font-size: 14px; }
+        th { background: #f6f8f3; color: #52665c; font-size: 12px; letter-spacing: .3px; text-transform: uppercase; }
+        td:last-child, th:last-child { text-align: right; }
+        .remove-button { min-height: 36px; padding: 5px 9px; border: 0; border-radius: 3px; background: transparent; color: #874b40; font-size: 13px; font-weight: 700; }
+        .remove-button:hover { background: #f7e9e5; }
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+        .footnote { margin: 12px 2px 0; color: #586b61; font-size: 13px; line-height: 1.6; }
+        .notice { margin: 0 0 18px; padding: 14px 16px; border: 1px solid #e4d7ae; border-radius: 4px; background: #fff8df; color: #55471f; font-size: 15px; }
+        .notice[hidden] { display: none; }
+        @media (max-width: 760px) {
+            .heading-row { align-items: stretch; flex-direction: column; }
+            .filters, .filter, .filter select { width: 100%; }
+            .charts { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 520px) {
+            .topbar { padding-inline: 15px; }
+            .brand-name { font-size: 16px; }
+            main { padding-top: 25px; }
+            .overview { grid-template-columns: 1fr 1fr; }
+            .overview-card:last-child { grid-column: 1 / -1; }
+            .grade-grid { grid-template-columns: repeat(3, 1fr); }
+            .panel { padding: 15px; }
+            .donut-layout { grid-template-columns: minmax(130px, 1fr) minmax(80px, .7fr); }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand"><img class="brand-logo" src="images.jpg" alt="Eagles Rising High School logo"><div class="brand-name">Eagles Rising High School</div></div>
+        <a class="back-link" href="index.html">Back to report</a>
+    </header>
+    <main>
+        <div class="heading-row">
+            <div>
+                <h1>Class performance</h1>
+                <p class="subtitle" id="classSubtitle">Review subject averages and class grade outcomes.</p>
+            </div>
+            <div class="filters">
+                <div class="filter"><label for="groupSelect">Class and reporting period</label><select id="groupSelect" aria-label="Select class and reporting period"></select></div>
+            </div>
+        </div>
+        <p class="notice" id="storageNotice" role="status" hidden></p>
+        <div class="overview" aria-label="Class overview">
+            <div class="overview-card"><span class="overview-label">Learners</span><strong class="overview-value" id="learnerCount">0</strong></div>
+            <div class="overview-card"><span class="overview-label">Class average</span><strong class="overview-value" id="classAverage">-</strong></div>
+            <div class="overview-card"><span class="overview-label">Learning areas</span><strong class="overview-value" id="subjectCount">0</strong></div>
+        </div>
+        <section aria-labelledby="gradeHeading">
+            <h2 id="gradeHeading" class="overview-label" style="margin:0 0 10px">Grade counts across recorded subject results</h2>
+            <div class="grade-grid" id="gradeGrid"></div>
+        </section>
+        <div class="charts">
+            <section class="panel" aria-labelledby="subjectHeading">
+                <h2 id="subjectHeading">Average mark by learning area</h2>
+                <p class="panel-note">Average of the saved learner marks for each subject.</p>
+                <div class="chart-wrap" id="subjectChartWrap"><svg class="chart" id="subjectChart" viewBox="0 0 700 260" role="img" aria-label="Bar chart of average marks by learning area"></svg></div>
+            </section>
+            <section class="panel" aria-labelledby="gradeChartHeading">
+                <h2 id="gradeChartHeading">Grade distribution</h2>
+                <p class="panel-note">Each saved subject score contributes one grade.</p>
+                <div class="donut-layout" id="gradeChartWrap">
+                    <svg class="chart donut-chart" id="gradeChart" viewBox="0 0 220 220" role="img" aria-label="Donut chart showing grade distribution"></svg>
+                    <div class="legend" id="gradeLegend"></div>
+                </div>
+            </section>
+        </div>
+        <section class="panel table-panel" aria-labelledby="learnersHeading">
+            <div class="table-heading"><h2 id="learnersHeading">Learner results</h2></div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Learner</th><th>Admission no.</th><th>Results entered</th><th>Average</th><th>Overall grade</th><th><span class="sr-only">Actions</span></th></tr></thead>
+                    <tbody id="learnerRows"></tbody>
+                </table>
+            </div>
+        </section>
+        <p class="footnote">Grade counts represent subject scores, not distinct learners. Grades follow the report scale: A 80-100, B 70-79, C 60-69, D 50-59, E 40-49, and F below 40.</p>
+    </main>
+    <script>
+        (() => {
+            const STORAGE_KEY = "eagles-class-results-v1";
+            const GRADES = ["A", "B", "C", "D", "E", "F"];
+            const COLORS = ["#43815d", "#7ba66c", "#d5b44f", "#d78a4d", "#c97957", "#b95248"];
+            const groupSelect = document.getElementById("groupSelect");
+            const gradeGrid = document.getElementById("gradeGrid");
+            const learnerRows = document.getElementById("learnerRows");
+            let records = [];
+
+            function gradeFor(mark) {
+                if (mark >= 80) return "A";
+                if (mark >= 70) return "B";
+                if (mark >= 60) return "C";
+                if (mark >= 50) return "D";
+                if (mark >= 40) return "E";
+                return "F";
+            }
+
+            function validRecord(record) {
+                return record && typeof record === "object" && typeof record.key === "string" &&
+                    typeof record.studentName === "string" && typeof record.className === "string" &&
+                        Array.isArray(record.subjects) && record.subjects.length > 0 &&
+                    record.subjects.every(subject => subject && typeof subject.name === "string" &&
+                        Number.isFinite(Number(subject.mark)) && Number(subject.mark) >= 0 && Number(subject.mark) <= 100);
+            }
+
+            function groupKey(record) {
+                return JSON.stringify([record.className, record.term || "", record.academicYear || ""]);
+            }
+
+            function readRecords() {
+                try {
+                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+                    if (!Array.isArray(saved)) throw new Error("Class results data is not a list.");
+                    records = saved.filter(validRecord);
+                    if (records.length !== saved.length) {
+                        document.getElementById("storageNotice").textContent = "Some saved results were invalid and have been excluded from the analysis.";
+                        document.getElementById("storageNotice").hidden = false;
+                    }
+                } catch (error) {
+                    console.warn("Could not load class results.", error);
+                    records = [];
+                    const notice = document.getElementById("storageNotice");
+                    notice.textContent = "Could not read saved class results from this device. Check browser storage and try again.";
+                    notice.hidden = false;
+                }
+            }
+
+            function createSvgElement(tag, attributes = {}) {
+                const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
+                Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, value));
+                return element;
+            }
+
+            function updateGroups() {
+                const previous = groupSelect.value;
+                const groups = new Map();
+                records.forEach(record => {
+                    const key = groupKey(record);
+                    if (!groups.has(key)) groups.set(key, record);
+                });
+                groupSelect.replaceChildren();
+                [...groups.entries()].forEach(([key, record]) => {
+                    const option = document.createElement("option");
+                    option.value = key;
+                    option.textContent = [record.className, record.term, record.academicYear].filter(Boolean).join(" · ");
+                    groupSelect.appendChild(option);
+                });
+                if (groups.has(previous)) groupSelect.value = previous;
+                else if (records.length) {
+                    const latest = records.reduce((newest, record) => record.updatedAt > newest.updatedAt ? record : newest, records[0]);
+                    groupSelect.value = groupKey(latest);
+                }
+                document.getElementById("classSubtitle").textContent = records.length
+                    ? "Review subject averages and class grade outcomes for the selected group."
+                    : "Save learner results from the report page to build class-wide charts.";
+            }
+
+            function renderEmpty() {
+                document.getElementById("learnerCount").textContent = "0";
+                document.getElementById("classAverage").textContent = "-";
+                document.getElementById("subjectCount").textContent = "0";
+                gradeGrid.replaceChildren();
+                GRADES.forEach(grade => {
+                    const card = document.createElement("div");
+                    card.className = "grade-card";
+                    card.dataset.grade = grade;
+                    card.innerHTML = `<span class="grade-name">${grade}</span><strong class="grade-count">0</strong>`;
+                    gradeGrid.appendChild(card);
+                });
+                const subjectWrap = document.getElementById("subjectChartWrap");
+                subjectWrap.innerHTML = '<div class="empty-chart">No learner results saved for this class and period yet.</div>';
+                const gradeWrap = document.getElementById("gradeChartWrap");
+                gradeWrap.innerHTML = '<div class="empty-chart">Grade distribution will appear after results are saved.</div>';
+                learnerRows.innerHTML = '<tr><td colspan="6" class="empty-chart">No learners saved for this group.</td></tr>';
+            }
+
+            function renderBarChart(subjectAverages) {
+                const svg = document.getElementById("subjectChart");
+                svg.replaceChildren();
+                const width = 700;
+                const height = 260;
+                const margin = { top: 16, right: 12, bottom: 62, left: 38 };
+                const plotHeight = height - margin.top - margin.bottom;
+                [0, 25, 50, 75, 100].forEach(value => {
+                    const y = margin.top + plotHeight * (1 - value / 100);
+                    svg.appendChild(createSvgElement("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, stroke: "#e5ebe4", "stroke-width": 1 }));
+                    const label = createSvgElement("text", { x: margin.left - 8, y: y + 4, "text-anchor": "end" });
+                    label.textContent = `${value}%`;
+                    svg.appendChild(label);
+                });
+                const step = (width - margin.left - margin.right) / subjectAverages.length;
+                subjectAverages.forEach((subject, index) => {
+                    const barWidth = Math.min(42, step * .56);
+                    const barHeight = plotHeight * subject.average / 100;
+                    const x = margin.left + step * index + (step - barWidth) / 2;
+                    const y = margin.top + plotHeight - barHeight;
+                    const bar = createSvgElement("rect", { x, y, width: barWidth, height: barHeight, rx: 4, fill: "#43815d" });
+                    const title = createSvgElement("title");
+                    title.textContent = `${subject.name}: ${subject.average.toFixed(1)}% from ${subject.count} result${subject.count === 1 ? "" : "s"}`;
+                    bar.appendChild(title);
+                    svg.appendChild(bar);
+                    const value = createSvgElement("text", { x: x + barWidth / 2, y: y - 6, "text-anchor": "middle" });
+                    value.textContent = `${subject.average.toFixed(0)}%`;
+                    svg.appendChild(value);
+                    const label = createSvgElement("text", { x: x + barWidth / 2, y: height - margin.bottom + 18, "text-anchor": "middle" });
+                    label.textContent = subject.name.length > 13 ? `${subject.name.slice(0, 12)}…` : subject.name;
+                    label.appendChild(createSvgElement("title")).textContent = subject.name;
+                    svg.appendChild(label);
+                });
+            }
+
+            function renderDonut(counts, total) {
+                const svg = document.getElementById("gradeChart");
+                const legend = document.getElementById("gradeLegend");
+                svg.replaceChildren();
+                legend.replaceChildren();
+                let angle = -Math.PI / 2;
+                GRADES.forEach((grade, index) => {
+                    const count = counts[grade];
+                    if (count) {
+                        const nextAngle = angle + (count / total) * Math.PI * 2;
+                        const startX = 110 + 82 * Math.cos(angle);
+                        const startY = 110 + 82 * Math.sin(angle);
+                        if (count === total) {
+                            const middleX = 110 + 82 * Math.cos(angle + Math.PI);
+                            const middleY = 110 + 82 * Math.sin(angle + Math.PI);
+                            svg.appendChild(createSvgElement("path", { d: `M ${startX} ${startY} A 82 82 0 0 1 ${middleX} ${middleY} A 82 82 0 0 1 ${startX} ${startY}`, fill: "none", stroke: COLORS[index], "stroke-width": 24 }));
+                        } else {
+                            const endX = 110 + 82 * Math.cos(nextAngle);
+                            const endY = 110 + 82 * Math.sin(nextAngle);
+                            const largeArc = nextAngle - angle > Math.PI ? 1 : 0;
+                            svg.appendChild(createSvgElement("path", { d: `M ${startX} ${startY} A 82 82 0 ${largeArc} 1 ${endX} ${endY}`, fill: "none", stroke: COLORS[index], "stroke-width": 24 }));
+                        }
+                        angle = nextAngle;
+                    }
+                    const item = document.createElement("div");
+                    item.className = "legend-item";
+                    const swatch = document.createElement("span");
+                    swatch.className = "legend-swatch";
+                    swatch.style.backgroundColor = COLORS[index];
+                    const label = document.createElement("span");
+                    label.textContent = `${grade}: ${count} (${total ? Math.round(count / total * 100) : 0}%)`;
+                    item.append(swatch, label);
+                    legend.appendChild(item);
+                });
+                const totalLabel = createSvgElement("text", { x: 110, y: 108, class: "donut-total" });
+                totalLabel.textContent = String(total);
+                svg.appendChild(totalLabel);
+                const caption = createSvgElement("text", { x: 110, y: 127, class: "donut-caption" });
+                caption.textContent = "subject results";
+                svg.appendChild(caption);
+            }
+
+            function render() {
+                const selectedKey = groupSelect.value;
+                const selectedRecords = records.filter(record => groupKey(record) === selectedKey);
+                if (!selectedRecords.length) {
+                    renderEmpty();
+                    return;
+                }
+                const grades = Object.fromEntries(GRADES.map(grade => [grade, 0]));
+                const subjects = new Map();
+                let scoreTotal = 0;
+                let resultCount = 0;
+                selectedRecords.forEach(record => {
+                    record.subjects.forEach(subject => {
+                        const mark = Number(subject.mark);
+                        const grade = gradeFor(mark);
+                        grades[grade]++;
+                        scoreTotal += mark;
+                        resultCount++;
+                        const key = subject.name.trim().toLocaleLowerCase();
+                        const entry = subjects.get(key) || { name: subject.name.trim(), total: 0, count: 0 };
+                        entry.total += mark;
+                        entry.count++;
+                        subjects.set(key, entry);
+                    });
+                });
+                const subjectAverages = [...subjects.values()]
+                    .map(subject => ({ ...subject, average: subject.total / subject.count }))
+                    .sort((first, second) => first.name.localeCompare(second.name));
+                document.getElementById("learnerCount").textContent = String(selectedRecords.length);
+                document.getElementById("classAverage").textContent = resultCount ? `${(scoreTotal / resultCount).toFixed(1)}%` : "-";
+                document.getElementById("subjectCount").textContent = String(subjectAverages.length);
+                gradeGrid.replaceChildren();
+                GRADES.forEach(grade => {
+                    const card = document.createElement("div");
+                    card.className = "grade-card";
+                    card.dataset.grade = grade;
+                    card.innerHTML = `<span class="grade-name">${grade}</span><strong class="grade-count">${grades[grade]}</strong>`;
+                    gradeGrid.appendChild(card);
+                });
+                document.getElementById("subjectChartWrap").innerHTML = '<svg class="chart" id="subjectChart" viewBox="0 0 700 260" role="img" aria-label="Bar chart of average marks by learning area"></svg>';
+                if (subjectAverages.length) renderBarChart(subjectAverages);
+                else document.getElementById("subjectChartWrap").innerHTML = '<div class="empty-chart">No subject marks are available to chart.</div>';
+                document.getElementById("gradeChartWrap").innerHTML = '<svg class="chart donut-chart" id="gradeChart" viewBox="0 0 220 220" role="img" aria-label="Donut chart showing grade distribution"></svg><div class="legend" id="gradeLegend"></div>';
+                renderDonut(grades, resultCount);
+                learnerRows.replaceChildren();
+                selectedRecords
+                    .map(record => {
+                        const marks = record.subjects.map(subject => Number(subject.mark));
+                        return { record, marks, average: marks.reduce((sum, mark) => sum + mark, 0) / marks.length };
+                    })
+                    .sort((first, second) => second.average - first.average || first.record.studentName.localeCompare(second.record.studentName))
+                    .forEach(({ record, marks, average }) => {
+                    const row = document.createElement("tr");
+                    [record.studentName, record.studentId || "-", String(marks.length), `${average.toFixed(1)}%`, gradeFor(average)].forEach(value => {
+                        const cell = document.createElement("td");
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+                    const actionCell = document.createElement("td");
+                    const remove = document.createElement("button");
+                    remove.type = "button";
+                    remove.className = "remove-button";
+                    remove.dataset.recordKey = record.key;
+                    remove.textContent = "Remove";
+                    remove.setAttribute("aria-label", `Remove ${record.studentName} from class analysis`);
+                    actionCell.appendChild(remove);
+                    row.appendChild(actionCell);
+                    learnerRows.appendChild(row);
+                    });
+            }
+
+            function refresh() {
+                readRecords();
+                updateGroups();
+                render();
+            }
+
+            groupSelect.addEventListener("change", render);
+            learnerRows.addEventListener("click", event => {
+                const button = event.target.closest("[data-record-key]");
+                if (!button) return;
+                const record = records.find(item => item.key === button.dataset.recordKey);
+                if (!record || !window.confirm(`Remove ${record.studentName}'s results from class analysis?`)) return;
+                records = records.filter(item => item.key !== record.key);
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+                    updateGroups();
+                    render();
+                } catch (error) {
+                    console.warn("Could not remove class results.", error);
+                    document.getElementById("storageNotice").textContent = "Could not update saved class results on this device.";
+                    document.getElementById("storageNotice").hidden = false;
+                }
+            });
+            window.addEventListener("storage", event => {
+                if (event.key === STORAGE_KEY) refresh();
+            });
+            refresh();
+        })();
+    </script>
+</body>
+</html>
