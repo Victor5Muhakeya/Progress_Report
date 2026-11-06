@@ -31,6 +31,9 @@
         button, input, select, textarea { font: inherit; }
         button { cursor: pointer; }
         .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
             min-height: 72px;
             display: flex;
             align-items: center;
@@ -142,9 +145,19 @@
         .remarks-copy { min-height: 38px; margin: 0; color: #344a3f; font-size: 12px; line-height: 1.6; white-space: pre-wrap; }
         .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: end; margin-top: 23px; }
         .grading-title { margin: 0 0 7px; font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+        .stamp-title { margin: 0 0 7px; font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+        .official-stamp { min-height: 180px; margin-bottom: 16px; border: 1px solid #9daaa1; }
         .grading-table { width: 100%; border-collapse: collapse; }
         .grading-table th, .grading-table td { padding: 5px 6px; border: 1px solid #e1e7df; text-align: left; font-size: 11px; }
         .grading-table th { background: #f0f4ee; color: #53675c; }
+        .grading-scale { margin-top: 22px; }
+        .grading-criteria { margin-top: 22px; }
+        .criteria-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .criteria-table th, .criteria-table td { padding: 9px 10px; border: 1px solid #cfd8ce; text-align: left; vertical-align: top; font-size: 12px; line-height: 1.5; }
+        .criteria-table th { background: #f0f4ee; color: #354c40; font-size: 12px; font-weight: 700; }
+        .criteria-table th:first-child, .criteria-table td:first-child { width: 20%; }
+        .criteria-grade { font-weight: 700; white-space: nowrap; }
+        .criteria-comment strong { display: block; margin-bottom: 2px; text-transform: uppercase; }
         .signature-area { display: flex; flex-direction: column; justify-content: flex-end; gap: 5px; min-height: 75px; }
         .signature-line { border-bottom: 1px solid #9daaa1; }
         .signature-label { color: #53665c; font-size: 11px; }
@@ -187,13 +200,32 @@
             .report-table th:nth-child(5) { width: 29%; }
         }
         @media print {
-            @page { size: A4; margin: 0; }
+            @page { size: A4; margin: 12mm; }
             :root, body { background: white; }
             .topbar, .editor, .preview-bar { display: none !important; }
             .workspace { display: block; width: 100%; margin: 0; padding: 0; }
             .preview-area { width: 100%; }
-            .report { max-width: none; min-height: 0; margin: 0; padding: 12mm; box-shadow: none; }
+            .report {
+                max-width: none;
+                width: 100%;
+                min-height: 0;
+                margin: 0;
+                padding: 8mm;
+                border: 1px solid #9daaa1;
+                box-shadow: none;
+                -webkit-box-decoration-break: clone;
+                box-decoration-break: clone;
+            }
             .student-details { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .official-stamp { min-height: 180px; }
+            .grading-scale { break-before: page; page-break-before: always; margin-top: 0; }
+            .grading-scale .grading-title { break-after: avoid; page-break-after: avoid; }
+            .grading-table { break-inside: avoid; page-break-inside: avoid; }
+            .grading-criteria { break-before: auto; page-break-before: auto; margin-top: 8px; }
+            .grading-criteria .grading-title { break-after: avoid; page-break-after: avoid; }
+            .criteria-table { break-inside: avoid; page-break-inside: avoid; }
+            .criteria-table th, .criteria-table td { padding: 5px 7px; font-size: 10px; line-height: 1.35; }
+            .criteria-comment strong { margin-bottom: 0; }
             .report-table th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
             .student-details, .summary-cell, .grade-pill { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
             .toast { display: none; }
@@ -259,7 +291,7 @@
                 <div class="field-grid">
                     <div class="field field-wide"><label for="teacherComment">Class teacher's remarks</label><textarea id="teacherComment" data-field="teacherComment" placeholder="Comment on progress, strengths, and next steps..."></textarea></div>
                     <div class="field"><label for="teacherName">Class teacher</label><input id="teacherName" data-field="teacherName" placeholder="Teacher's name"></div>
-                    <div class="field"><label for="headComment">Head teacher's remarks</label><input id="headComment" data-field="headComment" placeholder="Optional comment"></div>
+                    <div class="field"><label for="headComment">Principal's remarks</label><input id="headComment" data-field="headComment" placeholder="Optional comment"></div>
                 </div>
             </section>
         </section>
@@ -271,14 +303,14 @@
                     <img class="seal school-logo" src="images.jpg" alt="Eagles Rising High School logo">
                     <div>
                         <h2 class="report-school" id="previewSchool"></h2>
-                        <p class="report-address">LEARNING / CHARACTER / COMMUNITY</p>
+                        <p class="report-address">Soaring Towards Excellence</p>
                     </div>
                     <div class="seal" aria-hidden="true">+</div>
                 </header>
                 <h3 class="report-title">SCHOOL PROGRESS REPORT</h3>
                 <p class="report-period" id="previewPeriod"></p>
                 <div class="student-details">
-                    <div class="detail"><strong>Learner's name</strong><span id="previewName"></span></div>
+                    <div class="detail"><strong>Student name</strong><span id="previewName"></span></div>
                     <div class="detail"><strong>Admission no.</strong><span id="previewId"></span></div>
                     <div class="detail"><strong>Class / stream</strong><span id="previewClass"></span></div>
                     <div class="detail"><strong>Academic year</strong><span id="previewYear"></span></div>
@@ -296,34 +328,50 @@
                     <div class="summary-cell"><strong>Overall position</strong><span id="previewOverallPosition">-</span></div>
                     <div class="summary-cell"><strong>Status</strong><span id="previewStatus">-</span></div>
                 </div>
-                <div class="remarks-block">
-                    <h3 class="remarks-title">Class teacher's remarks</h3>
-                    <p class="remarks-copy" id="previewTeacherComment"></p>
-                </div>
-                <div class="remarks-block">
-                    <h3 class="remarks-title">Head teacher's remarks</h3>
-                    <p class="remarks-copy" id="previewHeadComment"></p>
-                </div>
                 <div class="bottom-grid">
                     <div>
-                        <h3 class="grading-title">Grading scale</h3>
-                        <table class="grading-table">
-                            <thead><tr><th>Grade</th><th>Mark</th><th>Achievement</th></tr></thead>
-                            <tbody>
-                                <tr><td>A</td><td>80-100</td><td>Excellent</td></tr>
-                                <tr><td>B</td><td>70-79</td><td>Very good</td></tr>
-                                <tr><td>C</td><td>60-69</td><td>Good</td></tr>
-                                <tr><td>D</td><td>50-59</td><td>Satisfactory</td></tr>
-                                <tr><td>E</td><td>40-49</td><td>Needs improvement</td></tr>
-                                <tr><td>F</td><td>0-39</td><td>Below expectations</td></tr>
-                            </tbody>
-                        </table>
+                        <h3 class="stamp-title">Official stamp</h3>
+                        <div class="official-stamp" aria-label="Space for the principal's official stamp"></div>
                     </div>
                     <div class="signature-area">
                         <div class="signature-line"></div><span class="signature-label">Class teacher's signature</span>
                         <div style="height:10px"></div>
                         <div class="signature-line"></div><span class="signature-label">Parent / guardian's signature</span>
                     </div>
+                </div>
+                <section class="grading-scale" aria-labelledby="gradingScaleTitle">
+                    <h3 class="grading-title" id="gradingScaleTitle">Grading scale</h3>
+                    <table class="grading-table">
+                        <thead><tr><th>Grade</th><th>Mark</th><th>Achievement</th></tr></thead>
+                        <tbody>
+                            <tr><td>A</td><td>85-100</td><td>Excellent</td></tr>
+                            <tr><td>B</td><td>75-84</td><td>Very good</td></tr>
+                            <tr><td>C</td><td>65-74</td><td>Good</td></tr>
+                            <tr><td>D</td><td>50-64</td><td>Average</td></tr>
+                            <tr><td>F</td><td>0-49</td><td>Fail</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="grading-criteria" aria-labelledby="gradingCriteriaTitle">
+                    <h3 class="grading-title" id="gradingCriteriaTitle">Grading criteria</h3>
+                    <table class="criteria-table">
+                        <thead><tr><th>Grade</th><th>Comment</th></tr></thead>
+                        <tbody>
+                            <tr><td class="criteria-grade">A<br>85-100</td><td class="criteria-comment"><strong>Excellent</strong>Outstanding understanding of subject content. The student applies creativity, asks logical questions, and comprehends broader content of the subject.</td></tr>
+                            <tr><td class="criteria-grade">B<br>75-84</td><td class="criteria-comment"><strong>Very good</strong>The student has very good understanding of the subject content and is beginning to apply creativity, logic, and questioning to the subject.</td></tr>
+                            <tr><td class="criteria-grade">C<br>65-74</td><td class="criteria-comment"><strong>Good</strong>The student shows good understanding of the subject and is gradually moving towards exploring more about the subject.</td></tr>
+                            <tr><td class="criteria-grade">D<br>50-64</td><td class="criteria-comment"><strong>Average</strong>The student has some understanding of the subject but needs additional help and learning support at school and home.</td></tr>
+                            <tr><td class="criteria-grade">F<br>0-49</td><td class="criteria-comment"><strong>Fail</strong>The student is working towards expected levels of expectation; however, they need teacher support with school work and academic cooperation with fellow students.</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+                <div class="remarks-block">
+                    <h3 class="remarks-title">Class teacher's remarks</h3>
+                    <p class="remarks-copy" id="previewTeacherComment"></p>
+                </div>
+                <div class="remarks-block">
+                    <h3 class="remarks-title">Principal's remarks</h3>
+                    <p class="remarks-copy" id="previewHeadComment"></p>
                 </div>
                 <footer class="report-footer"><span id="previewTeacherName"></span><span id="previewIssueDate"></span></footer>
             </article>
@@ -383,11 +431,10 @@
             function gradeFor(mark) {
                 const score = Number(mark);
                 if (mark === "" || !Number.isFinite(score)) return "-";
-                if (score >= 80) return "A";
-                if (score >= 70) return "B";
-                if (score >= 60) return "C";
+                if (score >= 85) return "A";
+                if (score >= 75) return "B";
+                if (score >= 65) return "C";
                 if (score >= 50) return "D";
-                if (score >= 40) return "E";
                 return "F";
             }
 
@@ -453,7 +500,7 @@
                     tbody.innerHTML = state.subjects.map(subject => {
                         const mark = subject.mark === "" ? "-" : `${escapeHtml(subject.mark)}%`;
                         const grade = gradeFor(subject.mark);
-                        const autoRemark = grade === "A" ? "Excellent" : grade === "B" ? "Very good" : grade === "C" ? "Good" : grade === "D" ? "Satisfactory" : grade === "E" ? "Needs improvement" : grade === "F" ? "Needs support" : "-";
+                        const autoRemark = grade === "A" ? "Excellent" : grade === "B" ? "Very good" : grade === "C" ? "Good" : grade === "D" ? "Average" : grade === "F" ? "Fail" : "-";
                         return `<tr><td>${escapeHtml(subject.name || "-")}</td><td>${escapeHtml(subject.position || "-")}</td><td>${mark}</td><td><span class="grade-pill">${grade}</span></td><td>${escapeHtml(subject.remark || autoRemark)}</td></tr>`;
                     }).join("");
                 }
