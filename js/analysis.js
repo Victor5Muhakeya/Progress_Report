@@ -1,7 +1,7 @@
 (() => {
             const STORAGE_KEY = "eagles-class-results-v1";
-            const GRADES = ["A", "B", "C", "D", "E", "F"];
-            const COLORS = ["#43815d", "#7ba66c", "#d5b44f", "#d78a4d", "#c97957", "#b95248"];
+            const GRADES = ["A", "B", "C", "D", "F"];
+            const COLORS = ["#43815d", "#7ba66c", "#d5b44f", "#d78a4d", "#b95248"];
             const groupSelect = document.getElementById("groupSelect");
             const gradeGrid = document.getElementById("gradeGrid");
             const learnerRows = document.getElementById("learnerRows");
