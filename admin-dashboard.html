@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#193b34">
+    <title>Administration | Eagles Rising High School</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="admin-dashboard.html">
+                <img src="images.jpg" alt="" class="brand-logo">
+                <span><strong>Eagles Rising</strong><small>School administration</small></span>
+            </a>
+            <div class="sidebar-label">Workspace</div>
+            <nav class="navigation" id="navigation" aria-label="Administration">
+                <button class="nav-link active" data-view="overview"><span class="nav-icon">▦</span>Dashboard overview</button>
+                <button class="nav-link" data-view="teachers"><span class="nav-icon">♙</span>Teachers</button>
+                <button class="nav-link" data-view="students"><span class="nav-icon">♧</span>Students</button>
+                <button class="nav-link" data-view="classes"><span class="nav-icon">▤</span>Classes</button>
+                <button class="nav-link" data-view="subjects"><span class="nav-icon">▧</span>Subjects</button>
+                <button class="nav-link" data-view="years"><span class="nav-icon">◷</span>Years &amp; terms</button>
+                <button class="nav-link" data-view="assignments"><span class="nav-icon">⇄</span>Teacher assignments</button>
+                <button class="nav-link" data-view="marks"><span class="nav-icon">✎</span>Marks &amp; results</button>
+                <button class="nav-link" data-view="performance"><span class="nav-icon">▥</span>Performance analysis</button>
+                <button class="nav-link" data-view="completion"><span class="nav-icon">✓</span>Reports &amp; completion</button>
+                <button class="nav-link" data-view="audit"><span class="nav-icon">☷</span>Audit logs</button>
+                <button class="nav-link" data-view="settings"><span class="nav-icon">⚙</span>System settings</button>
+            </nav>
+            <div class="sidebar-bottom">
+                <a href="reports.html">↗ <span>Report editor</span></a>
+                <a href="analysis.html">↗ <span>Class analysis</span></a>
+            </div>
+        </aside>
+        <div class="main-shell">
+            <header class="topbar">
+                <button class="icon-button menu-button" id="menuButton" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+                <div class="breadcrumb"><span>Administration</span><strong id="viewCrumb">Dashboard overview</strong></div>
+                <div class="topbar-actions"><span class="demo-badge"><span></span> DEMO DATA</span><button class="button button-outline" id="resetDemoButton">Reset demo data</button></div>
+            </header>
+            <main class="content" id="content" tabindex="-1"></main>
+            <footer class="page-footer">Eagles Rising High School · Administrator workspace <span>Frontend demonstration — not connected to authentication or the school database.</span></footer>
+        </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <dialog class="dialog" id="recordDialog" aria-labelledby="dialogTitle">
+        <form id="recordForm" method="dialog" novalidate>
+            <div class="dialog-heading"><div><p class="eyebrow" id="dialogEyebrow">Manage records</p><h2 id="dialogTitle">Add record</h2></div><button class="icon-button" value="cancel" aria-label="Close dialog">×</button></div>
+            <div id="formFields" class="form-fields"></div>
+            <p class="form-error" id="formError" role="alert"></p>
+            <div class="dialog-actions"><button class="button button-outline" value="cancel">Cancel</button><button class="button button-primary" id="saveRecordButton" value="save">Save record</button></div>
+        </form>
+        <div class="subject-picker-popover" id="subjectPickerPopover" popover="manual" role="group" aria-label="Select subjects"></div>
+    </dialog>
+    <script src="js/admin-data.js" defer></script>
+    <script src="js/admin-dashboard.js" defer></script>
+</body>
+</html>

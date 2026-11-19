@@ -245,5 +245,24 @@
                 }
             });
 
+            const reportSidebar = document.getElementById("reportSidebar");
+            const menuButton = document.getElementById("menuButton");
+            const sidebarScrim = document.getElementById("sidebarScrim");
+
+            function setMenuOpen(open) {
+                reportSidebar.classList.toggle("open", open);
+                menuButton.setAttribute("aria-expanded", String(open));
+                menuButton.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+                sidebarScrim.hidden = !open;
+            }
+
+            menuButton.addEventListener("click", () => {
+                setMenuOpen(menuButton.getAttribute("aria-expanded") !== "true");
+            });
+            sidebarScrim.addEventListener("click", () => setMenuOpen(false));
+            document.addEventListener("keydown", event => {
+                if (event.key === "Escape") setMenuOpen(false);
+            });
+
             syncForm();
         })();

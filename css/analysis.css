@@ -40,7 +40,7 @@
         .overview-card { padding: 19px 21px; }
         .overview-label { color: #52665c; font-size: 13px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
         .overview-value { display: block; margin-top: 6px; font-family: "Fraunces", Georgia, serif; font-size: 30px; }
-        .grade-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 24px; }
+        .grade-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 24px; }
         .grade-heading { margin: 0 0 10px; }
         .grade-card { padding: 12px 14px; }
         .grade-name { color: #52665c; font-size: 13px; font-weight: 700; text-transform: uppercase; }
@@ -49,7 +49,6 @@
         .grade-card[data-grade="B"] { border-top: 3px solid #7ba66c; }
         .grade-card[data-grade="C"] { border-top: 3px solid #d5b44f; }
         .grade-card[data-grade="D"] { border-top: 3px solid #d78a4d; }
-        .grade-card[data-grade="E"] { border-top: 3px solid #c97957; }
         .grade-card[data-grade="F"] { border-top: 3px solid #b95248; }
         .charts { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 16px; margin-bottom: 24px; }
         .panel { min-width: 0; padding: 20px; }
